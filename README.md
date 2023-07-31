@@ -7,15 +7,14 @@ This is a template repository, meant to be copied to start a skeleton of other p
 
 A bit about the README.md below:
 - Delete everything in this "How to use this template repository" (everything above the ==== line). 
-- Replace SNAP\_NAME with the name of the snap (ex. gnome-calculator).
+- Replace SNAP\_NAME with the name of the snap (ex. loupe).
 - Update any section starting with "TODO" to add the info requested, and remove the TODO line.
 
 ========================================================================================
-# SNAP\_NAME
+# loupe
 
-TODO: Add links to badges. Here's the gnome-calculator badge links for example:
-*[![gnome-calculator](https://snapcraft.io/gnome-calculator/badge.svg)](https://snapcraft.io/gnome-calculator)
-[![gnome-calculator](https://snapcraft.io/gnome-calculator/trending.svg?name=0)](https://snapcraft.io/gnome-calculator)*
+*[![loupe](https://snapcraft.io/loupe/badge.svg)](https://snapcraft.io/loupe)
+[![loupe](https://snapcraft.io/loupe/trending.svg?name=0)](https://snapcraft.io/loupe)*
 
 Below you will find some instructions to help you contribute to this snap. The general workflow will be to submit PRs from your fork onto the "stable" branch. Once the pull request has been *submitted*, there is a GitHub action that will automatically launch a build of the snap that you can use for testing. And then once the PR has been *merged* the GitHub action will launch a build on launchpad that will be automatically uploaded to the snap store, in the candidate channel, for more extensive testing.
 
@@ -30,7 +29,7 @@ Here is the workflow for submitting a change to the stable branch, and getting i
 
 ```
 git remote rename origin myfork
-git remote add ubuntu https://github.com/ubuntu/SNAP_NAME.git
+git remote add ubuntu https://github.com/ubuntu/loupe.git
 git fetch --all
 ```
 

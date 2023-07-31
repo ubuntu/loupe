@@ -1,0 +1,170 @@
+name: loupe
+base: core22
+adopt-info: loupe
+grade: stable
+confinement: strict
+
+layout:
+  /usr/share/loupe:
+    symlink: $SNAP/usr/share/loupe
+
+parts:    
+  gtk4:
+    source: https://gitlab.gnome.org/GNOME/gtk.git
+    source-tag: 4.11.3
+# ext:updatesnap
+#   version-format:
+#     ignore-odd-minor: true
+    source-depth: 1
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - -Dbuildtype=release
+      - -Doptimization=3
+      - -Ddebug=false
+      - -Dbroadway-backend=false
+      - -Dx11-backend=true
+      - -Dwayland-backend=true
+      - -Dwin32-backend=false
+      - -Dmacos-backend=false
+      - -Dintrospection=disabled
+      - -Dgtk_doc=false
+      - -Ddemos=false
+      - -Dbuild-examples=false
+      - -Dbuild-tests=false
+      - -Dmedia-gstreamer=disabled
+      - -Ddemos=false
+      - -Dbuild-testsuite=false
+      - -Dbuild-examples=false
+      - -Dbuild-tests=false
+      - -Dprint-cups=enabled
+    organize:
+      usr/lib/gtk-4.0: usr/lib/$CRAFT_ARCH_TRIPLET/gtk-4.0
+    build-packages:
+      - libxkbcommon-dev
+      - libcups2-dev
+      - libcolord-dev
+      - libxrandr-dev
+      - libxcursor-dev
+      - libisocodes-dev
+      - libxcomposite-dev
+      - libxdamage-dev
+      - libxfixes-dev
+      - libxi-dev
+      - libxkbfile-dev
+      - libxml2-utils
+      - libstemmer-dev
+      - libsystemd-dev
+      - libappstream-dev
+      - gperf
+      - xsltproc
+    stage:
+      - -usr/bin/wayland-scanner
+      - -usr/lib/*/libwayland-client.so.0.20.0
+      - -usr/lib/*/libwayland-server.so.0.20.0
+
+  libadwaita:
+    after: [ gtk4 ]
+    source: https://gitlab.gnome.org/GNOME/libadwaita.git
+    source-commit: '5c3245dbb7bb6febfa4656616bd2506041ba7d5f'
+    #source-commit: 'c9e7aba26e1b5bc68920c7c07ce5fd0b422a2ece'
+    source-depth: 1
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - -Dbuildtype=release
+      - -Doptimization=3
+      - -Ddebug=false
+      - -Dintrospection=disabled
+      - -Dvapi=true
+      - -Dtests=false
+      - -Dexamples=false
+      - -Dgtk_doc=false
+    build-environment:
+      - PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:$PKG_CONFIG_PATH
+    build-packages:
+      - sassc
+    override-pull: |
+      craftctl default
+      sed -i.bak 's|Wformat-nonliteral|Wno-format-nonliteral|g' meson.build
+      
+  rustup:
+    plugin: nil
+    build-packages: [wget]
+    build-environment:
+      - RUSTUP_HOME: $CRAFT_PART_INSTALL/usr/share/rust
+      - CARGO_HOME: $CRAFT_PART_INSTALL/usr/share/rust
+      - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
+    override-pull: |
+      wget https://sh.rustup.rs -O $CRAFT_PART_SRC/rustup-init.sh
+      chmod +x $CRAFT_PART_SRC/rustup-init.sh
+    override-build: |
+      $CRAFT_PART_SRC/rustup-init.sh -y --no-modify-path
+      mkdir -p $CRAFT_PART_INSTALL/usr/bin
+      for i in `ls $RUSTUP_HOME/bin/`; do
+        ln -s ../share/rust/bin/$i $CRAFT_PART_INSTALL/usr/bin/$i
+      done
+    override-prime: |
+      echo 'Skip Prime'
+
+  heif:
+    source: https://github.com/strukturag/libheif.git
+    source-tag: 'v1.14.2'
+    source-depth: 1
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -Doptimization=3
+      - -Ddebug=false
+
+  loupe:
+    after: [ rustup, libadwaita, heif ]
+    # See 'snapcraft plugins'
+    plugin: meson
+    source: https://gitlab.gnome.org/GNOME/Incubator/loupe.git
+    source-tag: '44.2'
+    build-environment:
+      - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
+      - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
+      - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
+      - PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/lib/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+    build-packages:
+      - libyaml-dev
+      - libxmlb-dev
+    meson-parameters:
+      - --prefix=/usr
+      - -Doptimization=3
+    parse-info: [ usr/share/metainfo/org.gnome.Loupe.metainfo.xml ]
+    override-pull: |
+      craftctl default
+      sed -i.bak 's|2.12.0|2.12|g' meson.build
+
+  libraries:
+    plugin: nil
+    stage-packages:
+      - libx265-199
+      - libde265-0
+      - libdav1d5
+      - libaom3
+      - libnuma1
+    prime:
+      - usr/lib/*/lib*265.so.*
+      - usr/lib/*/libdav1d.so.*
+      - usr/lib/*/libaom.so.*
+      - usr/lib/*/libnuma.so.*
+
+slots:
+  loupe:
+    interface: dbus
+    bus: session
+    name: org.gnome.Loupe
+
+apps:
+  loupe:
+    command: usr/bin/loupe
+    desktop: usr/share/applications/org.gnome.Loupe.desktop
+    extensions: [ gnome ]
+    common-id: org.gnome.Loupe
+    plugs:
+      - process-control
+      - home
