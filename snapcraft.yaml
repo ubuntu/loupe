@@ -14,7 +14,7 @@ parts:
     source-tag: 4.11.3
 # ext:updatesnap
 #   version-format:
-#     ignore-odd-minor: true
+#     ignore: true
     source-depth: 1
     plugin: meson
     meson-parameters:
@@ -64,6 +64,9 @@ parts:
       - -usr/lib/*/libwayland-server.so.0.20.0
 
   libadwaita:
+# ext:updatesnap
+#   version-format:
+#     ignore: true
     after: [ gtk4 ]
     source: https://gitlab.gnome.org/GNOME/libadwaita.git
     source-commit: '5c3245dbb7bb6febfa4656616bd2506041ba7d5f'
@@ -123,6 +126,7 @@ parts:
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/Incubator/loupe.git
     source-tag: '44.2'
+    source-depth: 1
     build-environment:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
