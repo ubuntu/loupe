@@ -9,88 +9,6 @@ layout:
     symlink: $SNAP/usr/share/loupe
 
 parts:    
-  gtk4:
-    source: https://gitlab.gnome.org/GNOME/gtk.git
-    source-tag: 4.11.3
-# ext:updatesnap
-#   version-format:
-#     ignore: true
-    source-depth: 1
-    plugin: meson
-    meson-parameters:
-      - --prefix=/usr
-      - -Dbuildtype=release
-      - -Doptimization=3
-      - -Ddebug=false
-      - -Dbroadway-backend=false
-      - -Dx11-backend=true
-      - -Dwayland-backend=true
-      - -Dwin32-backend=false
-      - -Dmacos-backend=false
-      - -Dintrospection=disabled
-      - -Dgtk_doc=false
-      - -Ddemos=false
-      - -Dbuild-examples=false
-      - -Dbuild-tests=false
-      - -Dmedia-gstreamer=disabled
-      - -Ddemos=false
-      - -Dbuild-testsuite=false
-      - -Dbuild-examples=false
-      - -Dbuild-tests=false
-      - -Dprint-cups=enabled
-    organize:
-      usr/lib/gtk-4.0: usr/lib/$CRAFT_ARCH_TRIPLET/gtk-4.0
-    build-packages:
-      - libxkbcommon-dev
-      - libcups2-dev
-      - libcolord-dev
-      - libxrandr-dev
-      - libxcursor-dev
-      - libisocodes-dev
-      - libxcomposite-dev
-      - libxdamage-dev
-      - libxfixes-dev
-      - libxi-dev
-      - libxkbfile-dev
-      - libxml2-utils
-      - libstemmer-dev
-      - libsystemd-dev
-      - libappstream-dev
-      - gperf
-      - xsltproc
-    stage:
-      - -usr/bin/wayland-scanner
-      - -usr/lib/*/libwayland-client.so.0.20.0
-      - -usr/lib/*/libwayland-server.so.0.20.0
-
-  libadwaita:
-# ext:updatesnap
-#   version-format:
-#     ignore: true
-    after: [ gtk4 ]
-    source: https://gitlab.gnome.org/GNOME/libadwaita.git
-    source-commit: '5c3245dbb7bb6febfa4656616bd2506041ba7d5f'
-    #source-commit: 'c9e7aba26e1b5bc68920c7c07ce5fd0b422a2ece'
-    source-depth: 1
-    plugin: meson
-    meson-parameters:
-      - --prefix=/usr
-      - -Dbuildtype=release
-      - -Doptimization=3
-      - -Ddebug=false
-      - -Dintrospection=disabled
-      - -Dvapi=true
-      - -Dtests=false
-      - -Dexamples=false
-      - -Dgtk_doc=false
-    build-environment:
-      - PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:$PKG_CONFIG_PATH
-    build-packages:
-      - sassc
-    override-pull: |
-      craftctl default
-      sed -i.bak 's|Wformat-nonliteral|Wno-format-nonliteral|g' meson.build
-      
   rustup:
     plugin: nil
     build-packages: [wget]
@@ -121,12 +39,15 @@ parts:
       - -Ddebug=false
 
   loupe:
-    after: [ rustup, libadwaita, heif ]
+    after: [ rustup, heif ]
     # See 'snapcraft plugins'
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/Incubator/loupe.git
-    source-tag: '44.2'
+    source-tag: '45.0'
     source-depth: 1
+# ext:updatesnap
+#   version-format:
+#     lower-than: 46.0
     build-environment:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
