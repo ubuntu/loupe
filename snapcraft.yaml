@@ -7,6 +7,8 @@ confinement: strict
 layout:
   /usr/share/loupe:
     symlink: $SNAP/usr/share/loupe
+  /usr/libexec/glycin-loaders:
+    bind: $SNAP/usr/libexec/glycin-loaders
 
 parts:    
   rustup:
@@ -37,6 +39,17 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -Doptimization=3
       - -Ddebug=false
+      
+  glycin-loaders:
+    after: [rustup, heif]
+    plugin: meson
+    source: https://download.gnome.org/sources/glycin-loaders/0.1/glycin-loaders-0.1.1.tar.xz
+    build-environment:
+      - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
+      - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
+      - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
+    meson-parameters:
+      - --prefix=/usr
 
   loupe:
     after: [ rustup, heif ]
@@ -52,13 +65,13 @@ parts:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
-      - PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/lib/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
     build-packages:
       - libyaml-dev
       - libxmlb-dev
     meson-parameters:
       - --prefix=/usr
       - -Doptimization=3
+      - -Ddisable-glycin-sandbox=true
     parse-info: [ usr/share/metainfo/org.gnome.Loupe.metainfo.xml ]
     override-pull: |
       craftctl default
