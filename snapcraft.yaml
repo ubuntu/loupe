@@ -44,6 +44,9 @@ parts:
     after: [rustup, heif]
     plugin: meson
     source: https://download.gnome.org/sources/glycin-loaders/0.1/glycin-loaders-0.1.1.tar.xz
+# ext:updatesnap
+#   version-format:
+#     ignore: true
     build-environment:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
@@ -55,7 +58,7 @@ parts:
     after: [ rustup, heif ]
     # See 'snapcraft plugins'
     plugin: meson
-    source: https://gitlab.gnome.org/GNOME/Incubator/loupe.git
+    source: https://gitlab.gnome.org/GNOME/loupe.git
     source-tag: '45.0'
     source-depth: 1
 # ext:updatesnap
