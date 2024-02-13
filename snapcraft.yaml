@@ -3,6 +3,7 @@ base: core22
 adopt-info: loupe
 grade: stable
 confinement: strict
+compression: lzo
 
 layout:
   /usr/share/loupe:
@@ -10,7 +11,7 @@ layout:
   /usr/libexec/glycin-loaders:
     bind: $SNAP/usr/libexec/glycin-loaders
 
-parts:    
+parts:
   rustup:
     plugin: nil
     build-packages: [wget]
