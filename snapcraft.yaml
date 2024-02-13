@@ -60,7 +60,7 @@ parts:
     # See 'snapcraft plugins'
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/loupe.git
-    source-tag: '45.0'
+    source-tag: '45.3'
     source-depth: 1
 # ext:updatesnap
 #   version-format:
