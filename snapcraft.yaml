@@ -33,14 +33,14 @@ parts:
 
   heif:
     source: https://github.com/strukturag/libheif.git
-    source-tag: 'v1.14.2'
+    source-tag: 'v1.17.6'
     source-depth: 1
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -Doptimization=3
       - -Ddebug=false
-      
+
   glycin-loaders:
     after: [rustup, heif]
     plugin: meson
