@@ -1,5 +1,5 @@
 name: loupe
-base: core22
+base: core24
 adopt-info: loupe
 grade: stable
 confinement: strict
@@ -60,11 +60,11 @@ parts:
     # See 'snapcraft plugins'
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/loupe.git
-    source-tag: '45.3'
+    source-tag: '46.2'
     source-depth: 1
 # ext:updatesnap
 #   version-format:
-#     lower-than: 46.0
+#     lower-than: 47.0
     build-environment:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
@@ -80,13 +80,14 @@ parts:
     override-pull: |
       craftctl default
       sed -i.bak 's|2.12.0|2.12|g' meson.build
+    build-snaps: [ gnome-46-2404-sdk/latest/edge, gnome-46-2404/latest/edge ] #Only needed until these snaps land in stable
 
   libraries:
     plugin: nil
     stage-packages:
       - libx265-199
       - libde265-0
-      - libdav1d5
+      - libdav1d7
       - libaom3
       - libnuma1
     prime:
