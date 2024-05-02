@@ -80,7 +80,6 @@ parts:
     override-pull: |
       craftctl default
       sed -i.bak 's|2.12.0|2.12|g' meson.build
-    build-snaps: [ gnome-46-2404-sdk/latest/edge, gnome-46-2404/latest/edge ] #Only needed until these snaps land in stable
 
   libraries:
     plugin: nil
