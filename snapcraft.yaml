@@ -53,7 +53,9 @@ parts:
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
     meson-parameters:
-      - --prefix=/usr
+      - --prefix=/snap/loupe/current/usr
+    organize:
+       snap/loupe/current/usr: usr
 
   loupe:
     after: [ rustup, heif ]
