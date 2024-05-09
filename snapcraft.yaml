@@ -44,7 +44,8 @@ parts:
   glycin-loaders:
     after: [rustup, heif]
     plugin: meson
-    source: https://download.gnome.org/sources/glycin-loaders/0.1/glycin-loaders-0.1.1.tar.xz
+    source: https://gitlab.gnome.org/sophie-h/glycin.git
+    source-tag: '1.0.1'
 # ext:updatesnap
 #   version-format:
 #     ignore: true
@@ -54,6 +55,7 @@ parts:
       - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
     meson-parameters:
       - --prefix=/usr
+      - -Dloaders=glycin-heif,glycin-image-rs,glycin-svg
 
   loupe:
     after: [ rustup, heif ]
