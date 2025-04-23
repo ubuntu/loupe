@@ -41,7 +41,7 @@ parts:
       - libclang-18-dev
 
   loupe:
-    after: [ rustup, heif ]
+    after: [heif]
     # See 'snapcraft plugins'
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/loupe.git
@@ -64,9 +64,6 @@ parts:
       - -Doptimization=3
       - -Ddisable-glycin-sandbox=true
     parse-info: [ usr/share/metainfo/org.gnome.Loupe.metainfo.xml ]
-    override-pull: |
-      craftctl default
-      sed -i.bak 's|2.12.0|2.12|g' meson.build
     override-build: |
       rustup default stable
       craftctl default
