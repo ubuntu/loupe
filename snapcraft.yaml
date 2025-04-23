@@ -39,10 +39,14 @@ parts:
       - -Dloaders=glycin-heif,glycin-image-rs,glycin-svg
     build-packages:
       - libclang-18-dev
+    build-snaps:
+      - rustup
+    override-build: |
+      rustup default stable
+      craftctl default
 
   loupe:
     after: [heif]
-    # See 'snapcraft plugins'
     plugin: meson
     source: https://gitlab.gnome.org/GNOME/loupe.git
     source-tag: '46.2'
