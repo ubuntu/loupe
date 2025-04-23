@@ -12,25 +12,6 @@ layout:
     bind: $SNAP/usr/libexec/glycin-loaders
 
 parts:
-  rustup:
-    plugin: nil
-    build-packages: [wget]
-    build-environment:
-      - RUSTUP_HOME: $CRAFT_PART_INSTALL/usr/share/rust
-      - CARGO_HOME: $CRAFT_PART_INSTALL/usr/share/rust
-      - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
-    override-pull: |
-      wget https://sh.rustup.rs -O $CRAFT_PART_SRC/rustup-init.sh
-      chmod +x $CRAFT_PART_SRC/rustup-init.sh
-    override-build: |
-      $CRAFT_PART_SRC/rustup-init.sh -y --no-modify-path
-      mkdir -p $CRAFT_PART_INSTALL/usr/bin
-      for i in `ls $RUSTUP_HOME/bin/`; do
-        ln -s ../share/rust/bin/$i $CRAFT_PART_INSTALL/usr/bin/$i
-      done
-    override-prime: |
-      echo 'Skip Prime'
-
   heif:
     source: https://github.com/strukturag/libheif.git
     source-tag: 'v1.17.6'
@@ -42,7 +23,7 @@ parts:
       - -Ddebug=false
 
   glycin-loaders:
-    after: [rustup, heif]
+    after: [heif]
     plugin: meson
     source: https://gitlab.gnome.org/sophie-h/glycin.git
     source-tag: '1.0.1'
@@ -76,6 +57,8 @@ parts:
     build-packages:
       - libyaml-dev
       - libxmlb-dev
+    build-snaps:
+      - rustup
     meson-parameters:
       - --prefix=/usr
       - -Doptimization=3
@@ -84,6 +67,9 @@ parts:
     override-pull: |
       craftctl default
       sed -i.bak 's|2.12.0|2.12|g' meson.build
+    override-build: |
+      rustup default stable
+      craftctl default
 
   libraries:
     plugin: nil
