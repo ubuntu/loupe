@@ -68,6 +68,9 @@ parts:
       - -Doptimization=3
       - -Ddisable-glycin-sandbox=true
     parse-info: [ usr/share/metainfo/org.gnome.Loupe.metainfo.xml ]
+    override-pull: |
+      craftctl default
+      patch -p1 < $CRAFT_PROJECT_DIR/patches/gtk417.patch
     override-build: |
       rustup default stable
       craftctl default

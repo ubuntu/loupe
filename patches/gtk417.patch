@@ -1,0 +1,53 @@
+From: Sophie Herold <sophie@hemio.de>
+Date: Mon, 11 Nov 2024 17:05:37 +0100
+Subject: [PATCH] application: Call style_manager from startup
+
+It was called from app constructed before. That's too early since since
+GTK/Adw is not initialized yet. This is treated as an error in GTK
+4.17.0 and terminates the app on startup.
+
+Closes #423
+
+Origin: 47.3
+---
+ src/application.rs                             | 12 ++++++------
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/src/application.rs b/src/application.rs
+index b1f64498..de5d3614 100644
+--- a/src/application.rs
++++ b/src/application.rs
+@@ -56,27 +56,27 @@ mod imp {
+         type ParentType = adw::Application;
+     }
+ 
+-    // Overrides GObject vfuncs
+     impl ObjectImpl for LpApplication {
+         fn constructed(&self) {
+             let obj = self.obj();
+ 
+             self.parent_constructed();
+ 
+-            // Force dark theme
+-            obj.style_manager()
+-                .set_color_scheme(adw::ColorScheme::PreferDark);
+-
+             // Set up the actions
+             obj.setup_actions();
+         }
+     }
+ 
+-    // Overrides GApplication vfuncs
+     impl ApplicationImpl for LpApplication {
+         fn startup(&self) {
+             log::trace!("Startup");
+             self.parent_startup();
++
++            // Force dark theme
++            self.obj()
++                .style_manager()
++                .set_color_scheme(adw::ColorScheme::PreferDark);
++
+             LpShyBin::ensure_type();
+             gtk::Window::set_default_icon_name(config::APP_ID);
+         }
