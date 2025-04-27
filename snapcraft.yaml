@@ -102,4 +102,5 @@ apps:
     extensions: [ gnome ]
     common-id: org.gnome.Loupe
     plugs:
+      # Required for Next/Previous Image to work
       - home
