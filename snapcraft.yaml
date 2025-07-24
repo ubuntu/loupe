@@ -21,7 +21,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -Doptimization=3
       - -Ddebug=false
-
+      - -DWITH_EXAMPLES=false
   glycin-loaders:
     after: [heif]
     plugin: meson
