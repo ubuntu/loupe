@@ -4,6 +4,16 @@ adopt-info: loupe
 grade: stable
 confinement: strict
 compression: lzo
+version: '46.2'
+summary: View images
+description: |
+  Browse through your images and inspect their metadata with:
+
+  Fast GPU accelerated image rendering
+  Tiled rendering for vector graphics
+  Extendable and sandboxed image decoding
+  Accessible presentation of the most important metadata.
+
 
 layout:
   /usr/share/loupe:
@@ -21,7 +31,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -Doptimization=3
       - -Ddebug=false
-
+      - -DWITH_EXAMPLES=false
   glycin-loaders:
     after: [heif]
     plugin: meson
@@ -51,6 +61,9 @@ parts:
     source: https://gitlab.gnome.org/GNOME/loupe.git
     source-tag: '46.2'
     source-depth: 1
+    stage-packages:
+      - libgtk-4-1
+      - libadwaita-1-0
 # ext:updatesnap
 #   version-format:
 #     lower-than: 47.0
@@ -68,9 +81,6 @@ parts:
       - -Doptimization=3
       - -Ddisable-glycin-sandbox=true
     parse-info: [ usr/share/metainfo/org.gnome.Loupe.metainfo.xml ]
-    override-pull: |
-      craftctl default
-      patch -p1 < $CRAFT_PROJECT_DIR/patches/gtk417.patch
     override-build: |
       rustup default stable
       craftctl default
@@ -83,11 +93,13 @@ parts:
       - libdav1d7
       - libaom3
       - libnuma1
+      - glib-networking
     prime:
       - usr/lib/*/lib*265.so.*
       - usr/lib/*/libdav1d.so.*
       - usr/lib/*/libaom.so.*
       - usr/lib/*/libnuma.so.*
+      - usr/lib/*/gio/modules/
 
 slots:
   loupe:
