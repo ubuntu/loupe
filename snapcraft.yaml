@@ -104,3 +104,4 @@ apps:
     plugs:
       # Required for Next/Previous Image to work
       - home
+      - removable-media
